@@ -14,23 +14,25 @@ def topology(args):
 
     info("*** Creating nodes\n")
 
+    ap1 = net.addAccessPoint('ap-1', ssid='new-ssid', mode='g', channel='1',
+                             failMode="standalone", position='50,50,0', range=30)
+
     var_name = "drone-{}"
     var_mac = "00:00:00:00:00:{:02d}"
     var_ip = "10.0.0.{}/8"
 
     for x in range(2, 23):
         net.addStation(var_name.format(x), mac=var_mac.format(x), ip=var_ip.format(x),
-                   min_x=0, max_x=80, min_y=0, max_y=80, min_v=5, max_v=80)        
-
-    
-    ap1 = net.addAccessPoint('ap-1', ssid='new-ssid', mode='g', channel='1',
-                                 failMode="standalone", position='50,50,0')
+                   min_x=0, max_x=80, min_y=0, max_y=80, min_v=5, max_v=80, range=20)        
 
     info("*** Configuring propagation model\n")
-    net.setPropagationModel(model="logDistance", sL=8, exp=8)
+    net.setPropagationModel(model="logDistance", exp=5)
 
     info("*** Configuring nodes\n")
     net.configureNodes()
+
+    for x in range(2, 23):
+        net.addLink(var_name.format(x), ap1)
 
     if '-p' not in args:
         net.plotGraph(max_x=200, max_y=200)
